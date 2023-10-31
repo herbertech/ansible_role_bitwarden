@@ -1,0 +1,25 @@
+- name: Create docker group
+  group:
+    name: docker
+    state: present
+
+- name: Create Bitwarden user
+  user:
+    name: bitwarden
+    uid: 1001
+    groups: docker
+    password: Password123
+    append: yes
+
+- name: Create Bitwarden directory
+  file:
+    path: /opt/bitwarden
+    state: directory
+    mode: 700
+    user: bitwarden
+    group: bitwarden
+
+- name: Download and unzip Bitwarden Offline installer
+  unarchive:
+    url: "https://github.com/bitwarden/server/releases/download/{{ bitwarden_version }}/docker-stub-EU.zip"
+    dest: /tmp/docker-stub-EU
