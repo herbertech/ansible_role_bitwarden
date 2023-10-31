@@ -16,10 +16,13 @@
     path: /opt/bitwarden
     state: directory
     mode: 700
-    user: bitwarden
+    owner: bitwarden
     group: bitwarden
 
-- name: Download and unzip Bitwarden Offline installer
-  unarchive:
-    url: "https://github.com/bitwarden/server/releases/download/{{ bitwarden_version }}/docker-stub-EU.zip"
-    dest: /tmp/docker-stub-EU
+- name: Create docker-stub-EU tmp directory
+  file:
+    path: /tmp/docker-stub-EU
+    state: directory
+    mode: 777
+    owner: bitwarden
+    group: bitwarden

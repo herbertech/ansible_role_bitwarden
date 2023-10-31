@@ -1,2 +1,5 @@
 - name: Prepare environment
   include_tasks: tasks/preTasks.yml
+
+- name: Install Bitwarden
+  include_tasks: tasks/installBitwarden.yml

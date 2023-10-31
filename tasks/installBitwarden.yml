@@ -1,0 +1,15 @@
+- name: Install required packages
+  apt:
+  pkg:
+    - zipinfo
+    - unzip
+    - gtar
+    - ca-certificates 
+    - curl
+    - gnupg
+
+- name: Download and unzip Bitwarden Offline installer
+  unarchive:
+    src: "https://github.com/bitwarden/server/releases/download/{{ bitwarden_version }}/docker-stub-EU.zip"
+    dest: /tmp/docker-stub-EU
+    remote_src: yes
