@@ -6,7 +6,7 @@
 - name: Create Bitwarden user
   user:
     name: bitwarden
-    uid: 1001
+    uid: '1001'
     groups: docker
     password: Password123
     append: yes
@@ -15,7 +15,7 @@
   file:
     path: /opt/bitwarden
     state: directory
-    mode: 700
+    mode: '770'
     owner: bitwarden
     group: bitwarden
 
@@ -23,6 +23,6 @@
   file:
     path: /tmp/docker-stub-EU
     state: directory
-    mode: 777
+    mode: '755'
     owner: bitwarden
     group: bitwarden

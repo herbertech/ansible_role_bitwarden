@@ -1,12 +1,10 @@
 - name: Install required packages
   apt:
-  pkg:
-    - zipinfo
-    - unzip
-    - gtar
-    - ca-certificates 
-    - curl
-    - gnupg
+    pkg:
+      - unzip
+      - ca-certificates 
+      - curl
+      - gnupg
 
 - name: Download and unzip Bitwarden Offline installer
   unarchive:
