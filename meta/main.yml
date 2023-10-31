@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Herbert Lindemans
+  description: Role for installing Bitwarden self-hosted on a debian system
+  company: Herbertech
+  license: license (GPL-2.0-or-later, MET, etc)
+  min_ansible_version: 2.9.0
