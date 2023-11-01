@@ -35,3 +35,10 @@
     mode: '755'
     owner: bitwarden
     group: bitwarden
+
+- name: Loop through and assign variables
+  set_fact:
+    "{{ item }}": "{{ lookup('community.general.random_string', length=32, special=false) }}"
+  loop: "{{ keys_to_generate }}"
+  loop_control:
+    loop_var: item

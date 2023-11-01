@@ -20,7 +20,7 @@
 
 - name: Copy nginx config template
   template:
-    src: templates/nginx-default.conf
+    src: templates/nginx-default.conf.j2
     dest: /tmp/bwdata/nginx/default.conf
 
 - name: Copy mssql config template

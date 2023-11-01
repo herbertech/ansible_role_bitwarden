@@ -1,5 +1,6 @@
 ---
 bitwarden_version: v2023.10.0
+
 required_vars:
   - bitwarden_hostname
   - db_password
@@ -10,3 +11,8 @@ required_vars:
   - smtp_host
   - emailUsr
   - emailPass
+
+keys_to_generate:
+  - internalIdKey
+  - oidcIdKey
+  - duoaKey
