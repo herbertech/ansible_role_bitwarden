@@ -1,19 +1,14 @@
-- name: Check required variables
+---
+- name: Include the variable file
+  ansible.builtin.include_vars:
+    file: vars/vars.yml
+
+- name: Verify vars are assigned
   assert:
-    that:
-      - bitwarden_hostname is defined
-      - db_password is defined
-      - certificate_password is defined
-      - bitwardenInstallId is defined
-      - bitwardenInstallKey is defined
-      - emailAddr is defined
-      - smtp_host is defined
-      - emailUsr is defined
-      - emailPass is defined
-    msg: "The following variables are not defined: {{ undefined_vars }}"
-  vars:
-    undefined_vars: "{{ (['bitwarden_hostname', 'db_password', 'certificate_password', 'bitwardenInstallId', 'bitwardenInstallKey', 'emailAddr', 'smtp_host', 'emailUsr', 'emailPass'] | difference(ansible_facts.keys())) | join(', ') }}"
-  tags: enforce_variables
+    that: "{{ item }} is defined"
+  loop: "{{ required_vars }}"
+  loop_control:
+    loop_var: item
 
 - name: Prepare environment
   include_tasks: tasks/preTasks.yml
