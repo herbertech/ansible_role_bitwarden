@@ -1,3 +1,20 @@
+- name: Check required variables
+  assert:
+    that:
+      - bitwarden_hostname is defined
+      - db_password is defined
+      - certificate_password is defined
+      - bitwardenInstallId is defined
+      - bitwardenInstallKey is defined
+      - emailAddr is defined
+      - smtp_host is defined
+      - emailUsr is defined
+      - emailPass is defined
+    msg: "The following variables are not defined: {{ undefined_vars }}"
+  vars:
+    undefined_vars: "{{ (['my_variable1', 'my_variable2'] | difference(ansible_facts.keys())) | join(', ') }}"
+  tags: enforce_variables
+
 - name: Prepare environment
   include_tasks: tasks/preTasks.yml
 

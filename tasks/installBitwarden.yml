@@ -5,9 +5,16 @@
       - ca-certificates 
       - curl
       - gnupg
+      - certbot
 
 - name: Download and unzip Bitwarden Offline installer
   unarchive:
     src: "https://github.com/bitwarden/server/releases/download/{{ bitwarden_version }}/docker-stub-EU.zip"
-    dest: /tmp/docker-stub-EU
+    dest: /tmp/bwdata
     remote_src: yes
+
+- name: Copy config template
+  template:
+    src: templates/global.override.env.j2
+    dest: /tmp/bwdata/env/global.override.env
+
