@@ -19,9 +19,18 @@
     owner: bitwarden
     group: bitwarden
 
-- name: Create docker-stub-EU tmp directory
+- name: Create bwdata tmp directory
   file:
     path: /tmp/bwdata
+    state: directory
+    mode: '755'
+    owner: bitwarden
+    group: bitwarden
+
+
+- name: Create bwdata ssl subdirectory
+  file:
+    path: "/tmp/bwdata/ssl/{{ bitwarden_hostname }}"
     state: directory
     mode: '755'
     owner: bitwarden

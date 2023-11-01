@@ -3,8 +3,8 @@
   community.general.acme_certificate:
     domains:
       - "{{ bitwarden_hostname }}"
-    cert_file: "/etc/letsencrypt/live/{{ bitwarden_hostname }}/fullchain.pem"
-    key_file: "/etc/letsencrypt/live/{{ bitwarden_hostname }}/privkey.pem"
+    cert_file: "/tmp/bwdata/ssl/{{ bitwarden_hostname }}/fullchain.pem"
+    key_file: "/tmp/bwdata/ssl/{{ bitwarden_hostname }}/privkey.pem"
     challenge: http-01
     contact_email: "{{ emailAddr }}" # Replace with your email address
     agreement_url: https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf
@@ -14,15 +14,15 @@
 - name: Convert certificate and private key to PFX
   openssl_pkcs12:
     action: export
-    path: "/tmp/bwdata/identity/{{ bitwarden_hostname }}.pfx"
+    path: "/tmp/bwdata/ssl/identity.pfx"
     name: "{{ bitwarden_hostname }}"  # Replace with your domain
-    privatekey_path: /etc/letsencrypt/live/{{ bitwarden_hostname }}/privkey.pem
-    certificate_path: /etc/letsencrypt/live/{{ bitwarden_hostname }}/fullchain.pem
+    privatekey_path: "/tmp/bwdata/ssl/{{ bitwarden_hostname }}/privkey.pem"
+    certificate_path: "/tmp/bwdata/ssl/{{ bitwarden_hostname }}/fullchain.pem"
     passphrase: "{{ certificate_password }}"  # Set your desired passphrase here
   when: acme_cert_result is succeeded
 
-- name: Clean up Let's Encrypt certificate files
-  file:
-    path: /etc/letsencrypt/live/yourdomain.com
-    state: absent
-  when: acme_cert_result is succeeded
+# - name: Clean up Let's Encrypt certificate files
+#   file:
+#     path: /etc/letsencrypt/live/yourdomain.com
+#     state: absent
+#   when: acme_cert_result is succeeded

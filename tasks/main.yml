@@ -12,7 +12,7 @@
       - emailPass is defined
     msg: "The following variables are not defined: {{ undefined_vars }}"
   vars:
-    undefined_vars: "{{ (['my_variable1', 'my_variable2'] | difference(ansible_facts.keys())) | join(', ') }}"
+    undefined_vars: "{{ (['bitwarden_hostname', 'db_password', 'certificate_password', 'bitwardenInstallId', 'bitwardenInstallKey', 'emailAddr', 'smtp_host', 'emailUsr', 'emailPass'] | difference(ansible_facts.keys())) | join(', ') }}"
   tags: enforce_variables
 
 - name: Prepare environment

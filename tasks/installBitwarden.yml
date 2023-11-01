@@ -7,14 +7,33 @@
       - gnupg
       - certbot
 
-- name: Download and unzip Bitwarden Offline installer
+- name: Download and unzip Bitwarden setup files
   unarchive:
     src: "https://github.com/bitwarden/server/releases/download/{{ bitwarden_version }}/docker-stub-EU.zip"
     dest: /tmp/bwdata
     remote_src: yes
 
-- name: Copy config template
+- name: Copy global config template
   template:
     src: templates/global.override.env.j2
     dest: /tmp/bwdata/env/global.override.env
 
+- name: Copy nginx config template
+  template:
+    src: templates/nginx-default.conf
+    dest: /tmp/bwdata/nginx/default.conf
+
+- name: Copy mssql config template
+  template:
+    src: templates/mssql.override.env.j2
+    dest: /tmp/bwdata/env/mssql.override.env
+
+- name: Copy app-id config template
+  template:
+    src: templates/app-id.json.j2
+    dest: /tmp/bwdata/web/app-id.json
+
+- name: Copy uid config template
+  template:
+    src: templates/uid.env.j2
+    dest: /tmp/bwdata/env/uid.env

@@ -1,2 +1,12 @@
 ---
 bitwarden_version: v2023.10.0
+required_vars:
+  - bitwarden_hostname
+  - db_password
+  - certificate_password
+  - bitwardenInstallId
+  - bitwardenInstallKey
+  - emailAddr
+  - smtp_host
+  - emailUsr
+  - emailPass
