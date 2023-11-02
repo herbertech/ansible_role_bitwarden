@@ -16,3 +16,5 @@ keys_to_generate:
   - internalIdKey
   - oidcIdKey
   - duoaKey
+
+install_location_prefix: /opt/bitwarden

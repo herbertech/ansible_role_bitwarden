@@ -13,7 +13,7 @@
 
 - name: Create Bitwarden directory
   file:
-    path: /opt/bitwarden
+    path: "{{ install_location_prefix }}"
     state: directory
     mode: '770'
     owner: bitwarden
@@ -21,7 +21,7 @@
 
 - name: Create bwdata tmp directory
   file:
-    path: /tmp/bwdata
+    path: "{{ install_location_prefix }}"
     state: directory
     mode: '755'
     owner: bitwarden
@@ -30,7 +30,7 @@
 
 - name: Create bwdata ssl subdirectory
   file:
-    path: "/tmp/bwdata/ssl/{{ bitwarden_hostname }}"
+    path: "{{ install_location_prefix }}/ssl/{{ bitwarden_hostname }}"
     state: directory
     mode: '755'
     owner: bitwarden

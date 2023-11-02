@@ -7,44 +7,15 @@
       - gnupg
       - certbot
 
-- name: Add Docker's official GPG key
+- name: Add Docker GPG apt Key
   apt_key:
-    url: https://download.docker.com/linux/{{ ansible_distribution|lower }}/gpg
+    url: "https://download.docker.com/linux/{{ ansible_distribution|lower }}/gpg"
     state: present
 
-- name: Create the /etc/apt/keyrings directory
-  file:
-    path: /etc/apt/keyrings
-    state: directory
-    mode: '0755'
-
-- name: Download Docker GPG key and save it to /etc/apt/keyrings/docker.gpg
-  get_url:
-    url: https://download.docker.com/linux/{{ ansible_distribution|lower }}/gpg
-    dest: /etc/apt/keyrings/docker.gpg
-    mode: '0644'
-  register: download_result
-
-- name: Debug Download Result
-  debug:
-    var: download_result
-
-- name: Ensure Docker GPG key is downloaded
-  fail:
-    msg: "Failed to download Docker GPG key"
-  when: not download_result.changed
-
-- name: Download Docker GPG key and save it to /etc/apt/keyrings/docker.gpg
-  command: gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
-- name: Add Docker repository to Apt sources
+- name: Add Docker Repository
   apt_repository:
-    repo: "deb [arch={{ ansible_architecture }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/{{ ansible_distribution|lower }} {{ ansible_distribution_release }} stable"
+    repo: "deb https://download.docker.com/linux/{{ ansible_distribution|lower }} {{ ansible_distribution_release }} stable"
     state: present
-
-- name: Update Apt cache
-  apt:
-    update_cache: yes
 
 - name: Install docker required packages
   apt:
@@ -54,34 +25,43 @@
       - containerd.io 
       - docker-buildx-plugin 
       - docker-compose-plugin
+      - docker-compose
+
+- name: Install docker python pip module
+  pip:
+    name: 
+      - docker
 
 - name: Download and unzip Bitwarden setup files
   unarchive:
     src: "https://github.com/bitwarden/server/releases/download/{{ bitwarden_version }}/docker-stub-EU.zip"
-    dest: /tmp/bwdata
+    dest: "{{ install_location_prefix }}"
     remote_src: yes
 
 - name: Copy global config template
   template:
     src: templates/global.override.env.j2
-    dest: /tmp/bwdata/env/global.override.env
+    dest: "{{ install_location_prefix }}/env/global.override.env"
 
 - name: Copy nginx config template
   template:
     src: templates/nginx-default.conf.j2
-    dest: /tmp/bwdata/nginx/default.conf
+    dest: "{{ install_location_prefix }}/nginx/default.conf"
 
 - name: Copy mssql config template
   template:
     src: templates/mssql.override.env.j2
-    dest: /tmp/bwdata/env/mssql.override.env
+    dest: "{{ install_location_prefix }}/env/mssql.override.env"
 
 - name: Copy app-id config template
   template:
     src: templates/app-id.json.j2
-    dest: /tmp/bwdata/web/app-id.json
+    dest: "{{ install_location_prefix }}/web/app-id.json"
 
 - name: Copy uid config template
   template:
     src: templates/uid.env.j2
-    dest: /tmp/bwdata/env/uid.env
+    dest: "{{ install_location_prefix }}/env/uid.env"
+
+- name: Deploy Bitwarden Docker Compose stack
+  command: "docker-compose -f {{ install_location_prefix }}/docker/docker-compose.yml up -d"

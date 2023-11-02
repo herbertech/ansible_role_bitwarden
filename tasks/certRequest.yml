@@ -1,28 +1,37 @@
 ---
-- name: Obtain Let's Encrypt certificate
-  community.general.acme_certificate:
-    domains:
-      - "{{ bitwarden_hostname }}"
-    cert_file: "/tmp/bwdata/ssl/{{ bitwarden_hostname }}/fullchain.pem"
-    key_file: "/tmp/bwdata/ssl/{{ bitwarden_hostname }}/privkey.pem"
-    challenge: http-01
-    contact_email: "{{ emailAddr }}" # Replace with your email address
-    agreement_url: https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf
-  register: acme_cert_result
-  ignore_errors: true  # Ignore errors in case the certificate is already obtained
+# tasks file for letsencrypt_certificate
 
-- name: Convert certificate and private key to PFX
-  openssl_pkcs12:
-    action: export
-    path: "/tmp/bwdata/ssl/identity.pfx"
-    name: "{{ bitwarden_hostname }}"  # Replace with your domain
-    privatekey_path: "/tmp/bwdata/ssl/{{ bitwarden_hostname }}/privkey.pem"
-    certificate_path: "/tmp/bwdata/ssl/{{ bitwarden_hostname }}/fullchain.pem"
-    passphrase: "{{ certificate_password }}"  # Set your desired passphrase here
-  when: acme_cert_result is succeeded
+- name: Ensure certbot is installed
+  ansible.builtin.package:
+    name: certbot
+    state: present
 
-# - name: Clean up Let's Encrypt certificate files
-#   file:
-#     path: /etc/letsencrypt/live/yourdomain.com
-#     state: absent
-#   when: acme_cert_result is succeeded
+- name: Request Let's Encrypt certificate using standalone method
+  command: "certbot certonly --standalone --preferred-challenges http -d {{ bitwarden_hostname }} -m {{ emailAddr }} --cert-name {{ bitwarden_hostname }} --agree-tos -n"
+  register: certbot_output
+
+- name: Copy certificates to Bitwarden directory
+  copy:
+    src: "/etc/letsencrypt/live/{{ bitwarden_hostname }}/"
+    dest: "{{ install_location_prefix }}/ssl/{{ bitwarden_hostname }}/"
+    mode: '0500'
+
+- name: Whoami
+  command: whoami
+  register: currentuser
+
+- name: Usernamu running
+  debug:
+    msg: "{{ currentuser.stdout }}"
+
+- name: Create pfx file and copy to bitwarden location
+  command: "openssl pkcs12 -export -out {{ install_location_prefix }}/identity/identity.pfx -inkey {{ install_location_prefix }}/ssl/{{ bitwarden_hostname }}/privkey.pem -in {{ install_location_prefix }}/ssl/{{ bitwarden_hostname }}/cert.pem -passout pass:{{ certificate_password }}"
+
+# - name: Extract certificate and private key paths
+#   set_fact:
+#     certificate_path: "{{ certbot_output.stdout_lines | regex_search('Certificate is saved at: (.*)', '\\1') }}"
+#     private_key_path: "{{ certbot_output.stdout_lines | regex_search('Key is saved at: (.*)', '\\1') }}"
+
+# - name: Let's Encrypt output
+#   debug:
+#     msg: "Cert location: {{ certificate_path }} | Private key location: {{ private_key_path }}"

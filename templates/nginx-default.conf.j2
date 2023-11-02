@@ -16,10 +16,10 @@ server {
 server {
   listen 8443 ssl http2;
   listen [::]:8443 ssl http2;
-  server_name bitwarden_hostname;
+  server_name {{ bitwarden_hostname }};
 
-  ssl_certificate /tmp/bwdata/ssl/{{ bitwarden_hostname }}/privkey.pem;
-  ssl_certificate_key /tmp/bwdata/ssl/{{ bitwarden_hostname }}/privkey.pem;
+  ssl_certificate "{{ install_location_prefix }}/ssl/{{ bitwarden_hostname }}/cert.pem;
+  ssl_certificate_key "{{ install_location_prefix }}/ssl/{{ bitwarden_hostname }}/privkey.pem;
   ssl_session_timeout 30m;
   ssl_session_cache shared:SSL:20m;
   ssl_session_tickets off;
